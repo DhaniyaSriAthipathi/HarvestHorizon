@@ -1,3 +1,5 @@
+//package HarvestHorizon.java;
+
 import java.util.*;
 
 class Crop {
@@ -25,39 +27,21 @@ class Crop {
 
     public void setRainAffectedLand(double land) {
         this.rainAffectedLand = land;
-        this.compensation = land * 5000; // Govt. compensation ₹5000 per acre
+        this.compensation = land * 5000; // ₹5000 per acre
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getSeason() {
-        return season;
-    }
-
-    public double getTodayPrice() {
-        return todayPrice;
-    }
-
-    public double getYesterdayPrice() {
-        return yesterdayPrice;
-    }
-
-    public String getDisease() {
-        return disease;
-    }
-
-    public double getCompensation() {
-        return compensation;
-    }
+    public String getName() { return name; }
+    public String getSeason() { return season; }
+    public double getTodayPrice() { return todayPrice; }
+    public double getYesterdayPrice() { return yesterdayPrice; }
+    public String getDisease() { return disease; }
+    public double getCompensation() { return compensation; }
 
     public void generateReport(Map<String, String> diseaseInfo, String farmerName) {
         System.out.println("\n===== 🌾 HarvestHorizon Report =====");
         System.out.println("👨‍🌾 Farmer Name: " + farmerName);
         System.out.println("🌱 Crop: " + name + " (" + season + ")");
-        System.out.println("💰 Today’s Price: ₹" + todayPrice + "/kg | Yesterday: ₹"
-                + yesterdayPrice + "/kg");
+        System.out.println("💰 Today’s Price: ₹" + todayPrice + "/kg | Yesterday: ₹" + yesterdayPrice + "/kg");
 
         if (todayPrice > yesterdayPrice) {
             System.out.println("📈 Price Change: +₹" + (todayPrice - yesterdayPrice) + " (Profit ↑)");
@@ -79,10 +63,10 @@ class Crop {
         }
 
         if (rainAffectedLand > 0) {
-            System.out.println("🌧️ Rainfall Compensation: ₹" + compensation
-                    + " (Affected: " + rainAffectedLand + " acres)");
+            System.out.println("🌧 Rainfall Compensation: ₹" + compensation +
+                    " (Affected: " + rainAffectedLand + " acres)");
         } else {
-            System.out.println("🌧️ No rainfall damage reported");
+            System.out.println("🌧 No rainfall damage reported");
         }
 
         System.out.println("-------------------------------------");
@@ -100,41 +84,104 @@ public class HarvestHorizonFinal {
         diseaseInfo.put("Wheat Rust", "Apply Mancozeb spray");
         diseaseInfo.put("Cotton Wilt", "Use Carbendazim treatment");
         diseaseInfo.put("Sugarcane Red Rot", "Use Bavistin fungicide");
+        diseaseInfo.put("Maize Leaf Blight", "Spray Zineb or Mancozeb");
+        diseaseInfo.put("Soybean Rust", "Use Propiconazole fungicide");
+        diseaseInfo.put("Groundnut Tikka Disease", "Spray Chlorothalonil");
 
+        // Crop-wise disease mapping
+        Map<String, String> cropDiseaseMap = new HashMap<>();
+        cropDiseaseMap.put("Rice", "Rice Blast");
+        cropDiseaseMap.put("Wheat", "Wheat Rust");
+        cropDiseaseMap.put("Cotton", "Cotton Wilt");
+        cropDiseaseMap.put("Sugarcane", "Sugarcane Red Rot");
+        cropDiseaseMap.put("Maize", "Maize Leaf Blight");
+        cropDiseaseMap.put("Soybean", "Soybean Rust");
+        cropDiseaseMap.put("Groundnut", "Groundnut Tikka Disease");
+
+        // Crop-wise seasons
+        Map<String, List<String>> cropSeasons = new HashMap<>();
+        cropSeasons.put("Rice", Arrays.asList("Kharif", "Rabi", "Summer"));
+        cropSeasons.put("Wheat", Arrays.asList("Rabi", "Spring", "Summer"));
+        cropSeasons.put("Cotton", Arrays.asList("Kharif", "Summer", "Autumn"));
+        cropSeasons.put("Sugarcane", Arrays.asList("Annual", "Spring", "Autumn"));
+        cropSeasons.put("Maize", Arrays.asList("Kharif", "Rabi", "Summer"));
+        cropSeasons.put("Soybean", Arrays.asList("Kharif", "Rabi", "Summer"));
+        cropSeasons.put("Groundnut", Arrays.asList("Kharif", "Rabi", "Summer"));
+
+        // Crop price database (simulated real-world data)
+        Map<String, Double> todayPrices = new HashMap<>();
+        Map<String, Double> yesterdayPrices = new HashMap<>();
+
+        todayPrices.put("Rice", 32.5);
+        yesterdayPrices.put("Rice", 31.8);
+
+        todayPrices.put("Wheat", 28.0);
+        yesterdayPrices.put("Wheat", 27.5);
+
+        todayPrices.put("Cotton", 62.0);
+        yesterdayPrices.put("Cotton", 60.0);
+
+        todayPrices.put("Sugarcane", 4.0);
+        yesterdayPrices.put("Sugarcane", 3.8);
+
+        todayPrices.put("Maize", 25.5);
+        yesterdayPrices.put("Maize", 26.0);
+
+        todayPrices.put("Soybean", 52.5);
+        yesterdayPrices.put("Soybean", 51.0);
+
+        todayPrices.put("Groundnut", 60.0);
+        yesterdayPrices.put("Groundnut", 59.5);
+
+        // Start input
         System.out.print("Enter Farmer Name: ");
         String farmerName = sc.nextLine();
         System.out.print("Enter Land Size (in acres): ");
         double landSize = sc.nextDouble();
-        sc.nextLine(); // consume newline
+        sc.nextLine();
 
         System.out.println("\n--- 🌾 Welcome to HarvestHorizon 🌾 ---");
 
         boolean addMore = true;
         while (addMore) {
-            System.out.print("\nEnter Crop Name (or -1 to stop): ");
-            String cropName = sc.nextLine();
-            if (cropName.equals("-1"))
-                break;
+            System.out.println("\nSelect Crop:");
+            String[] cropList = {"Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Soybean", "Groundnut"};
+            for (int i = 0; i < cropList.length; i++) {
+                System.out.println((i + 1) + ". " + cropList[i]);
+            }
+            System.out.print("Enter your choice (1-7 or -1 to stop): ");
+            int cropChoice = sc.nextInt();
+            if (cropChoice == -1) break;
+            sc.nextLine();
 
-            System.out.print("Enter Crop Season: ");
-            String season = sc.nextLine();
+            String cropName = cropList[cropChoice - 1];
 
-            System.out.print("Enter Today’s Price per kg: ");
-            double todayPrice = sc.nextDouble();
+            // Select season
+            System.out.println("\nSelect Season for " + cropName + ":");
+            List<String> seasons = cropSeasons.get(cropName);
+            for (int i = 0; i < seasons.size(); i++) {
+                System.out.println((i + 1) + ". " + seasons.get(i));
+            }
+            System.out.print("Enter your choice (1-3): ");
+            int seasonChoice = sc.nextInt();
+            sc.nextLine();
+            String season = seasons.get(seasonChoice - 1);
 
-            System.out.print("Enter Yesterday’s Price per kg: ");
-            double yesterdayPrice = sc.nextDouble();
-            sc.nextLine(); // consume newline
+            // Automatically get prices
+            double todayPrice = todayPrices.get(cropName);
+            double yesterdayPrice = yesterdayPrices.get(cropName);
+            System.out.println("💰 Today’s Price for " + cropName + ": ₹" + todayPrice + "/kg");
+            System.out.println("💰 Yesterday’s Price: ₹" + yesterdayPrice + "/kg");
 
             Crop crop = new Crop(cropName, season, todayPrice, yesterdayPrice);
 
-            // Disease check
+            // Disease check (auto-detect)
             System.out.print("Is the crop affected by any disease? (yes/no): ");
             String diseaseAns = sc.nextLine();
             if (diseaseAns.equalsIgnoreCase("yes")) {
-                System.out.print("Enter disease name: ");
-                String disease = sc.nextLine();
+                String disease = cropDiseaseMap.get(cropName);
                 crop.setDisease(disease);
+                System.out.println("🦠 Disease detected: " + disease);
             }
 
             // Rainfall check
@@ -143,13 +190,12 @@ public class HarvestHorizonFinal {
             if (rainAns.equalsIgnoreCase("yes")) {
                 System.out.print("Enter how much land (in acres) was affected: ");
                 double affectedLand = sc.nextDouble();
-                sc.nextLine(); // consume newline
+                sc.nextLine();
                 crop.setRainAffectedLand(affectedLand);
             }
 
-            // Generate report for this crop
+            // Generate report
             crop.generateReport(diseaseInfo, farmerName);
-
             crops.add(crop);
 
             System.out.print("\nDo you want to enter another crop? (yes/no): ");
@@ -167,16 +213,14 @@ public class HarvestHorizonFinal {
 
         for (Crop c : crops) {
             double priceDiff = c.getTodayPrice() - c.getYesterdayPrice();
-            if (priceDiff > 0)
-                profitCount++;
-            else if (priceDiff < 0)
-                lossCount++;
+            if (priceDiff > 0) profitCount++;
+            else if (priceDiff < 0) lossCount++;
 
-            System.out.println(i + "️⃣ " + c.getName() + " → "
-                    + (priceDiff > 0 ? "Profit ↑ ₹" + priceDiff + "/kg"
+            System.out.println(i + "⃣ " + c.getName() + " → " +
+                    (priceDiff > 0 ? "Profit ↑ ₹" + priceDiff + "/kg"
                             : priceDiff < 0 ? "Loss ↓ ₹" + (-priceDiff) + "/kg"
-                                    : "No Change")
-                    + " | Compensation: ₹" + c.getCompensation());
+                            : "No Change") +
+                    " | Compensation: ₹" + c.getCompensation());
             totalCompensation += c.getCompensation();
             i++;
         }
@@ -192,11 +236,11 @@ public class HarvestHorizonFinal {
         for (Crop c : crops) {
             double change = c.getTodayPrice() - c.getYesterdayPrice();
             String changeText = (change > 0 ? "↑ +₹" + change : change < 0 ? "↓ -₹" + (-change) : "No Change");
-            System.out.printf("%-15s %-15.2f %-15.2f %-15s%n", c.getName(), c.getYesterdayPrice(), c.getTodayPrice(),
-                    changeText);
+            System.out.printf("%-15s %-15.2f %-15.2f %-15s%n",
+                    c.getName(), c.getYesterdayPrice(), c.getTodayPrice(), changeText);
         }
 
-        System.out.println("\n🌱 Thank you for visiting *HARVESTHORIZON* 🌱");
+        System.out.println("\n🌱 Thank you for visiting HARVESTHORIZON 🌱");
         System.out.println("🌍 Empowering Farmers with Knowledge & Growth 🌍");
 
         sc.close();
